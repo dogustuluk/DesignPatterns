@@ -45,5 +45,12 @@ namespace BaseProject.Controllers
             //uygulamamızın patlaması için
             
         }
+
+        public async Task<IActionResult> LogOut()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
     }
 }
