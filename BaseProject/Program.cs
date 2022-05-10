@@ -1,5 +1,9 @@
+using BaseProject.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,7 +17,39 @@ namespace BaseProject
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            //scope almamýzýn sebebi >>> scope ile beraber AppIdentityDbContext'ten bir nesne örneði alýyoruz ve iþimiz bittiði zaman memory'de bu nesneler tutulmasýn
+            //istiyoruz.
+            using var scope = host.Services.CreateScope();
+
+            var identityDbContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
+            //ServiceProvider'ýn özelliði >> startup.cs tarafýnda ConfigureServices tarafýnda eklediðim servisleri alabilmeme imkan saðlýyor. Burada bir
+            //constructor olmadýðý için nesne örneðini almak için serviceProvider ile startup.cs'den alýyoruz.
+            //GetRequiredService ile GetService farký >>>>>>
+            //GetRequiredService'te servisi alamazsa geriye hata fýrlatýr, kesinlikle bir servisi almasý gerekir
+            //GetService ise servisi alamaz ise geriye hata fýrlatmayýp null döner
+
+
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            //kullanýcý kaydetmek için var userManager dedik. identity kütüphanesinden gelen UserManager kullandýk.
+
+            identityDbContext.Database.Migrate();
+            //bu kod ile (Migrate() ile) >>> update-database komutunu vermemize gerek yok. uygulama ayaða kalktýðýnda migration'lar veri tabanaýna uygulanmadýysa
+            //bunlarý uygular ayný zamanda veri tabaný yok ise kendisi sýfýrdan oluþturur. Veri tabaný var ise uygulanmayan migration'larý uygular.
+
+            if (!userManager.Users.Any()) //veri tabanýna kayýt iþlemini her defasýnda yapmamak için kullanýcýnýn olup olmadýðýný kontrol ediyoruz
+            {
+                userManager.CreateAsync(new AppUser() { UserName = "user1", Email = "user1@gmail.com" }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user2", Email = "user2@gmail.com" }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user3", Email = "user3@gmail.com" }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user4", Email = "user4@gmail.com" }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user5", Email = "user5@gmail.com" }, "Password12*").Wait();
+            }
+
+
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
