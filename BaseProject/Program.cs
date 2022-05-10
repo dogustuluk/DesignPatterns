@@ -35,11 +35,18 @@ namespace BaseProject
             //kullanýcý kaydetmek için var userManager dedik. identity kütüphanesinden gelen UserManager kullandýk.
 
             identityDbContext.Database.Migrate();
-            //bu kod ile (Migrate() ile) >>> update-database komutunu vermemize gerek yok. uygulama ayaða kalktýðýnda migration'lar veri tabanaýna uygulanmadýysa
+            //bu kod ile (Migrate() ile) >>> update-database komutunu vermemize gerek yok. uygulama ayaða kalktýðýnda migration'lar veri tabanýna uygulanmadýysa
             //bunlarý uygular ayný zamanda veri tabaný yok ise kendisi sýfýrdan oluþturur. Veri tabaný var ise uygulanmayan migration'larý uygular.
 
             if (!userManager.Users.Any()) //veri tabanýna kayýt iþlemini her defasýnda yapmamak için kullanýcýnýn olup olmadýðýný kontrol ediyoruz
             {
+                //blok içerisinde "Wait()" kullandýk çünkü uygulama ayaða kalktýðýnda sadece bir kere çalýþacak ve devamýnda olan her çalýþmada aktif olarak 
+                //çalýþmayacaðýndan dolayý. Diðer sýnýflarýmýzda ise asenkron programlama yapmaya özen gösteriyoruz çünkü var olan thread'leri bloklamamamýz 
+                //gerekiyor. Burada asenkron yapmamýza ise sunulan gerekçeden dolayý gerekli olmamaktadýr.
+                //await'ler gelen thread'i bloklamazlar, Wait'ler ise gelen thread'i bloklar.
+                //Wait bir method, await ise bir keyword'tür.
+                //buradaki kodlarda asenkron bir method kullanmaz ciddi bir etki göstermez projemizde fakat diðer sýnýflarda, sürekli çalýþacak olan sýnýflarda
+                //asenkron method'lar kullanmamýz ciddi performans artýþlarýna neden olacaktýr.
                 userManager.CreateAsync(new AppUser() { UserName = "user1", Email = "user1@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user2", Email = "user2@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user3", Email = "user3@gmail.com" }, "Password12*").Wait();
