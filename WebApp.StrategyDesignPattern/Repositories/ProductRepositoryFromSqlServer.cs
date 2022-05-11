@@ -8,6 +8,9 @@ using WebApp.StrategyDesignPattern.Models;
 
 namespace WebApp.StrategyDesignPattern.Repositories
 {
+    //1.stratejinin olduğu class.
+    //startup.cs dosyasına alttaki kodu yazmıyor olacağız strategy design pattern ile
+    //services.AddScoped<IProductRepository, ProductRepositoryFromSqlServer>();//
     public class ProductRepositoryFromSqlServer : IProductRepository
     {
         private readonly AppIdentityDbContext _context;
@@ -35,14 +38,18 @@ namespace WebApp.StrategyDesignPattern.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public Task<Product> Save(Product product)
+        public async Task<Product> Save(Product product)
         {
-            throw new NotImplementedException();
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+            return product;
         }
 
-        public Task Update(Product product)
+        public async Task Update(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Update(product); //update metodunun da asenkronu yoktur. Çünkü update de Remove metodu gibi çalışır; anlık olarak memory'de ilgili
+            //objenin property'sini set eder (state'ini değiştirir). 
+            await _context.SaveChangesAsync();
         }
     }
 }
