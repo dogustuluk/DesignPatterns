@@ -10,7 +10,7 @@ namespace WebApp.StrategyDesignPattern.Repositories
 {
     //1.stratejinin olduğu class.
     //startup.cs dosyasına alttaki kodu yazmıyor olacağız strategy design pattern ile
-    //services.AddScoped<IProductRepository, ProductRepositoryFromSqlServer>();//
+    //services.AddScoped<IProductRepository, ProductRepositoryFromSqlServer>();// böyle bir kod sadece "compile time"da programı etkiler, runtime'da etkilemez.
     public class ProductRepositoryFromSqlServer : IProductRepository
     {
         private readonly AppIdentityDbContext _context;
