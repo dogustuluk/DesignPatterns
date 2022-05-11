@@ -30,9 +30,9 @@ namespace WebApp.StrategyDesignPattern.Repositories
             return await _context.Products.Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public Task<Product> GetById(string id)
+        public async Task<Product> GetById(string id)
         {
-            throw new NotImplementedException();
+            return await _context.Products.FindAsync(id);
         }
 
         public Task<Product> Save(Product product)
