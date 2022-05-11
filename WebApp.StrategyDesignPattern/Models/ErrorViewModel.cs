@@ -1,6 +1,6 @@
 using System;
 
-namespace BaseProject.Models
+namespace WebApp.StrategyDesignPattern.Models
 {
     public class ErrorViewModel
     {
