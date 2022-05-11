@@ -22,14 +22,14 @@ namespace WebApp.StrategyDesignPattern.Repositories
             _productCollection = database.GetCollection<Product>("Products");
         }
 
-        public Task Delete(Product product)
+        public async Task Delete(Product product)
         {
-            throw new NotImplementedException();
+            await _productCollection.DeleteOneAsync(x => x.Id == product.Id);
         }
 
-        public Task<List<Product>> GetAllByUserId(string userId)
+        public async Task<List<Product>> GetAllByUserId(string userId)
         {
-            throw new NotImplementedException();
+            return await _productCollection.Find(x => x.UserId == userId).ToListAsync();
         }
 
         public Task<Product> GetById(string id)
