@@ -9,9 +9,11 @@ using BaseProject.Models;
 using WebApp.StrategyDesignPattern.Models;
 using WebApp.StrategyDesignPattern.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.StrategyDesignPattern.Controllers
 {
+    [Authorize]
     //repository ile haberleşilmesi doğru bir yöntem olmamaktadır. Burada repository yerine servis katmanıyla haberleşilmesi best
     //practice açısından uygundur.
     public class ProductsController : Controller
