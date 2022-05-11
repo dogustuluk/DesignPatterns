@@ -11,7 +11,7 @@ namespace WebApp.StrategyDesignPattern.Repositories
         Task<Product> GetById(string id);
         Task<List<Product>> GetAllByUserId(string userId);
         Task<Product> Save(Product product);
-        Task<Product> Delete(Product product);
-        Task<Product> Update(Product product);
+        Task Delete(Product product);
+        Task Update(Product product);
     }
 }
