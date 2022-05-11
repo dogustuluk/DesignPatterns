@@ -32,19 +32,20 @@ namespace WebApp.StrategyDesignPattern.Repositories
             return await _productCollection.Find(x => x.UserId == userId).ToListAsync();
         }
 
-        public Task<Product> GetById(string id)
+        public async Task<Product> GetById(string id)
         {
-            throw new NotImplementedException();
+            return await _productCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<Product> Save(Product product)
+        public async Task<Product> Save(Product product)
         {
-            throw new NotImplementedException();
+            await _productCollection.InsertOneAsync(product);
+            return product;
         }
 
-        public Task Update(Product product)
+        public async Task Update(Product product)
         {
-            throw new NotImplementedException();
+            await _productCollection.FindOneAndReplaceAsync(x => x.Id == product.Id, product);
         }
     }
 }
