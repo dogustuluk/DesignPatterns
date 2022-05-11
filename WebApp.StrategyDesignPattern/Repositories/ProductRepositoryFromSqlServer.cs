@@ -40,6 +40,7 @@ namespace WebApp.StrategyDesignPattern.Repositories
 
         public async Task<Product> Save(Product product)
         {
+            product.Id = Guid.NewGuid().ToString(); //bu guid değer üretme işlemi sadece sql server için gereklidir, mongoDb otomatik olarak üretmektedir.
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return product;
