@@ -6,7 +6,7 @@ using WebApp.StrategyDesignPattern.Models;
 
 namespace WebApp.StrategyDesignPattern.Repositories
 {
-    interface IProductRepository
+    public interface IProductRepository
     {
         Task<Product> GetById(string id);
         Task<List<Product>> GetAllByUserId(string userId);

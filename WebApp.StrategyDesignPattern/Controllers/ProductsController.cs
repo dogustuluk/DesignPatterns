@@ -7,22 +7,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BaseProject.Models;
 using WebApp.StrategyDesignPattern.Models;
+using WebApp.StrategyDesignPattern.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApp.StrategyDesignPattern.Controllers
 {
+    //repository ile haberleşilmesi doğru bir yöntem olmamaktadır. Burada repository yerine servis katmanıyla haberleşilmesi best
+    //practice açısından uygundur.
     public class ProductsController : Controller
     {
-        private readonly AppIdentityDbContext _context;
+        private readonly IProductRepository _productRepository;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ProductsController(AppIdentityDbContext context)
+        public ProductsController(IProductRepository productRepository, UserManager<AppUser> userManager)
         {
-            _context = context;
+            _productRepository = productRepository;
+            _userManager = userManager;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Products.ToListAsync());
+            //kullanıcıya ihtiyacımız olacak. Şuanda cookie'den gelen userName var.
+            //userId'yi bulmak için cookie'den user'ı alıyoruz.
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            return View(await _productRepository.GetAllByUserId(user.Id)); //user.Id'yi almak için DI Container'dan UserManager'ı almamız gerekiyor(23.satır).
+            //
         }
 
         // GET: Products/Details/5
@@ -33,8 +44,7 @@ namespace WebApp.StrategyDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productRepository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -58,8 +68,10 @@ namespace WebApp.StrategyDesignPattern.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                product.UserId = user.Id;
+                product.CreatedDate = DateTime.Now;
+                await _productRepository.Save(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -73,7 +85,7 @@ namespace WebApp.StrategyDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productRepository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -97,8 +109,7 @@ namespace WebApp.StrategyDesignPattern.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    await _productRepository.Update(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +135,7 @@ namespace WebApp.StrategyDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productRepository.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -139,15 +149,14 @@ namespace WebApp.StrategyDesignPattern.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            var product = await _productRepository.GetById(id);
+            await _productRepository.Delete(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(string id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _productRepository.GetById(id) != null;
         }
     }
 }
