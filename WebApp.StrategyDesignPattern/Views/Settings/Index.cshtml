@@ -6,7 +6,7 @@
 @model Settings
 
 <form asp-controller="Settings" asp-action="ChangeDatabase" method="post">
-    <select asp-for="databaseType" asp-items="Html.GetEnumSelectList<EDatabaseType>()"></select>
+    <select name="databaseType" asp-for="databaseType" asp-items="Html.GetEnumSelectList<EDatabaseType>()"></select>
     @*asp-items tagi ile enum'ları select listesinde gösterebiliriz.'*@
     @*asp-for ile ise seçili olan veritabanı bilgisi gelecektir. Settings'ten gelecek.*@
     <button type="submit">Güncelle</button>

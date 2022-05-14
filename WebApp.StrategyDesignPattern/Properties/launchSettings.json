@@ -10,7 +10,7 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true, //Uygulama IIS Express'ten başlatıldığında her daim yeni bir sekmeden çalıştırmaz projeyi. 
+      "launchBrowser": false, //Uygulama IIS Express'ten başlatıldığında her daim yeni bir sekmeden çalıştırmaz projeyi. 
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
