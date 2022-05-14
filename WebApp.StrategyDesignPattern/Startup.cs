@@ -1,6 +1,7 @@
 using BaseProject.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.StrategyDesignPattern.Models;
+using WebApp.StrategyDesignPattern.Repositories;
 
 namespace BaseProject
 {
@@ -26,6 +29,31 @@ namespace BaseProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor(); //bu servis üzerinden herhangi bir class'ýn constructor'ýna veya bir service provider üzerinden http.context'e eriþebiliriz.
+
+            services.AddScoped<IProductRepository>(serviceProvider =>
+            {
+                var context = serviceProvider.GetRequiredService<AppIdentityDbContext>();
+                var httpContextAccesor = serviceProvider.GetRequiredService<IHttpContextAccessor>(); //artýk bu servis üzerinden httpContex'e eriþebiliriz.
+
+                var claim = httpContextAccesor.HttpContext.User.Claims.Where(x => x.Type == Settings.claimDatabaseType).FirstOrDefault(); //claim olup olmadýðýný kontrol etmek için
+                if (claim == null) return new ProductRepositoryFromSqlServer(context);
+
+                var databaseType = (EDatabaseType)int.Parse(claim.Value); //null deðilse çalýþýr.
+
+                return databaseType switch
+                {
+                    EDatabaseType.SqlServer => new ProductRepositoryFromSqlServer(context),
+                    EDatabaseType.MongoDb => new ProductRepositoryFromMongoDb(Configuration),
+                    _ => throw new NotImplementedException()
+                };
+                
+
+                
+            });
+
+
+
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
