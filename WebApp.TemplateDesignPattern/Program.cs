@@ -47,11 +47,11 @@ namespace BaseProject
                 //Wait bir method, await ise bir keyword'tür.
                 //buradaki kodlarda asenkron bir method kullanmaz ciddi bir etki göstermez projemizde fakat diðer sýnýflarda, sürekli çalýþacak olan sýnýflarda
                 //asenkron method'lar kullanmamýz ciddi performans artýþlarýna neden olacaktýr.
-                userManager.CreateAsync(new AppUser() { UserName = "user1", Email = "user1@gmail.com" }, "Password12*").Wait();
-                userManager.CreateAsync(new AppUser() { UserName = "user2", Email = "user2@gmail.com" }, "Password12*").Wait();
-                userManager.CreateAsync(new AppUser() { UserName = "user3", Email = "user3@gmail.com" }, "Password12*").Wait();
-                userManager.CreateAsync(new AppUser() { UserName = "user4", Email = "user4@gmail.com" }, "Password12*").Wait();
-                userManager.CreateAsync(new AppUser() { UserName = "user5", Email = "user5@gmail.com" }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user1", Email = "user1@gmail.com", PictureUrl = "/userpictures/premiumUser.png", Description = "Lorem Ipsum, dizgi ve baský endüstrisinde kullanýlan mýgýr metinlerdir. Lorem Ipsum, adý bilinmeyen bir matbaacýnýn bir hurufat numune kitabý oluþturmak üzere bir yazý galerisini alarak karýþtýrdýðý 1500'lerden beri endüstri standardý sahte metinler olarak kullanýlmýþtýr." }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user2", Email = "user2@gmail.com", PictureUrl = "/userpictures/premiumUser.png", Description = "Lorem Ipsum, dizgi ve baský endüstrisinde kullanýlan mýgýr metinlerdir. Lorem Ipsum, adý bilinmeyen bir matbaacýnýn bir hurufat numune kitabý oluþturmak üzere bir yazý galerisini alarak karýþtýrdýðý 1500'lerden beri endüstri standardý sahte metinler olarak kullanýlmýþtýr." }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user3", Email = "user3@gmail.com", PictureUrl = "/userpictures/premiumUser.png", Description = "Lorem Ipsum, dizgi ve baský endüstrisinde kullanýlan mýgýr metinlerdir. Lorem Ipsum, adý bilinmeyen bir matbaacýnýn bir hurufat numune kitabý oluþturmak üzere bir yazý galerisini alarak karýþtýrdýðý 1500'lerden beri endüstri standardý sahte metinler olarak kullanýlmýþtýr." }, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user4", Email = "user4@gmail.com", PictureUrl = "/userpictures/premiumUser.png", Description = "Lorem Ipsum, dizgi ve baský endüstrisinde kullanýlan mýgýr metinlerdir. Lorem Ipsum, adý bilinmeyen bir matbaacýnýn bir hurufat numune kitabý oluþturmak üzere bir yazý galerisini alarak karýþtýrdýðý 1500'lerden beri endüstri standardý sahte metinler olarak kullanýlmýþtýr."}, "Password12*").Wait();
+                userManager.CreateAsync(new AppUser() { UserName = "user5", Email = "user5@gmail.com", PictureUrl = "/userpictures/premiumUser.png", Description = "Lorem Ipsum, dizgi ve baský endüstrisinde kullanýlan mýgýr metinlerdir. Lorem Ipsum, adý bilinmeyen bir matbaacýnýn bir hurufat numune kitabý oluþturmak üzere bir yazý galerisini alarak karýþtýrdýðý 1500'lerden beri endüstri standardý sahte metinler olarak kullanýlmýþtýr."}, "Password12*").Wait();
             }
 
 
