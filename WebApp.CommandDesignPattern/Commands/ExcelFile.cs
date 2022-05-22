@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebApp.CommandDesignPattern.Commands
-{
+{ //uml diyagramındaki Receiver'dır
     public class ExcelFile<T>
     {
         public readonly List<T> _list; //readonly dememizin sebebi>>>>> mutlaka ya constructor içerisinde ya da tanımlandığı yerde initialize edilsin,
