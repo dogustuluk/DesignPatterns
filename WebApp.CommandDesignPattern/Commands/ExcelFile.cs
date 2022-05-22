@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ClosedXML.Excel;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +17,25 @@ namespace WebApp.CommandDesignPattern.Commands
         public ExcelFile(List<T> list)
         {
             _list = list;
+        }
+
+        public MemoryStream Create() //geriye MemoryStream dönüyoruz >> excel dosyasını memory'de bir "bind array" olarak tutucaz.
+        {
+            var wb = new XLWorkbook();
+            //ardından dataset oluşturuyoruz. DataTable'ları tutan bir veritabanı olarak düşünülebilir.
+
+            var ds = new DataSet();
+
+            ds.Tables.Add(GetTable());
+
+            wb.Worksheets.Add(ds);
+
+            var excelMemory = new MemoryStream();
+
+            wb.SaveAs(excelMemory);
+            return excelMemory;
+
+            //artık memory'de bir excel dosyası var, bunu kullanının download edebileceği bir file context'e dönüştürebilirim.
         }
 
         private DataTable GetTable() //private yapıyoruz çünkü bunu dış dünyaya açmak istemiyoruz.
