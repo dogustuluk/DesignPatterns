@@ -7,7 +7,8 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-controller="Products" asp-route-type="@((int)EFileType.excel)" asp-action="CreateFile">Create Excel</a>
+    <a class="btn btn-primary" asp-controller="Products" asp-route-type="@((int)EFileType.pdf)" asp-action="CreateFile">Create Pdf</a>
 </p>
 <table class="table">
     <thead>

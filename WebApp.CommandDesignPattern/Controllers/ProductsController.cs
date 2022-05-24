@@ -33,7 +33,8 @@ namespace WebApp.CommandDesignPattern.Controllers
             {
                 case EFileType.excel:
                     ExcelFile<Product> excelFile = new(products);
-
+                    //excelFile.Create(); burada da Create metodunu kullanabiliriz fakat amacımız bunu burda yazmak değil. Bu işlemi kapsüllemek.
+                    //kapsülleme olayını ise invoker'ın içerisinde yani FileCreateInvoker class'ında kapsüllüyoruz.
                     fileCreateInvoker.SetCommand(new CreateExcelTableActionCommand<Product>(excelFile));
                     break;
                 case EFileType.pdf:

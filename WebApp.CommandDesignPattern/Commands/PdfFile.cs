@@ -52,9 +52,9 @@ namespace WebApp.CommandDesignPattern.Commands
                     sb.Append($"<td>{value}</td>");
                 });
                 sb.Append("</tr>");
-                sb.Append(@"</table>    </body>     </html>");
 
             });
+            sb.Append("</table></body></html>");
 
 
             var doc = new HtmlToPdfDocument()
