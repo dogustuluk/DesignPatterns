@@ -78,12 +78,15 @@ namespace WebApp.CommandDesignPattern.Controllers
 
                         using (var zipEntryStream = zipFile.Open())
                         {
-                            await new MemoryStream(fileContent.FileContents).CopyToAsync(zipMemoryStream);
+                            await new MemoryStream(fileContent.FileContents).CopyToAsync(zipEntryStream);
                         }
                     }
                 }
 
                 return File(zipMemoryStream.ToArray(), "application/zip", "all.zip");
+
+
+
             }
         }
     }
