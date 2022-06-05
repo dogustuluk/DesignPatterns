@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.ObserverDesignPattern.Models;
 
 namespace BaseProject.Models
 {
@@ -13,5 +14,6 @@ namespace BaseProject.Models
         {
 
         }
+        public DbSet<Discount> Discounts { get; set; }
     }
 }
