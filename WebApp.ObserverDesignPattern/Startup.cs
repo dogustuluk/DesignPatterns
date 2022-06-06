@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.ObserverDesignPattern.Observer;
 
 namespace BaseProject
 {
@@ -26,6 +27,17 @@ namespace BaseProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<UserObserverSubject>(sp =>
+            {
+                UserObserverSubject userObserverSubject = new();
+
+                userObserverSubject.RegisterObserver(new UserObservorWriteToConsole(sp));
+                userObserverSubject.RegisterObserver(new UserObserverCreateDiscount(sp));
+                userObserverSubject.RegisterObserver(new UserObserverSendEmail(sp));
+
+                return userObserverSubject;
+            });
+
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));

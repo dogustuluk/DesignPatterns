@@ -16,7 +16,7 @@ namespace WebApp.ObserverDesignPattern.Observer
         {
             _serviceProvider = serviceProvider;
         }
-        public void CreateUser(AppUser appUser)
+        public void UserCreated(AppUser appUser)
         {
             var logger = _serviceProvider.GetRequiredService<ILogger<UserObservorWriteToConsole>>();
             logger.LogInformation($"User ID:{appUser.Id}");
