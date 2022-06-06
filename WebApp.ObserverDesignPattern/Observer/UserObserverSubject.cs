@@ -9,14 +9,14 @@ namespace WebApp.ObserverDesignPattern.Observer
     public class UserObserverSubject
     {
         private readonly List<IUserObserver> _userObservers;
-        public UserObserverSubject(List<IUserObserver> userObservers)
-        {
-            _userObservers = userObservers;
-        }
-
         public UserObserverSubject()
         {
+            _userObservers = new List<IUserObserver>();
         }
+
+        //public UserObserverSubject()
+        //{
+        //}
 
         public void RegisterObserver(IUserObserver userObserver)
         {
