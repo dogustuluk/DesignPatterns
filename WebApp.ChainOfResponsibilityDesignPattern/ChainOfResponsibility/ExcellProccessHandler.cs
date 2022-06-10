@@ -18,20 +18,23 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
 
             type.GetProperties().ToList().ForEach(x => table.Columns.Add(x.Name, x.PropertyType));
 
-            var list = o as List<T>;
+            var list = o as List<T>; //listenin datası parametreden gelen "Object o" içerisinde fakat listenin türü ise class'a dinamik olarak gelen generic<T>'dedir.
+            //listenin tipi belirlenmiş oldu. listeyi >> o tipinde bir liste alabilecek bir hale getiriyoruz
 
             list.ForEach(x =>
             {
                 var values = type.GetProperties().Select(propertyInfo => propertyInfo.GetValue(x, null)).ToArray();
 
                 table.Rows.Add(values);
+                //DataTable'ı doldurmuş olduk
             });
 
             return table;
         }
 
-        public override object handle(object o)
-        {
+        public override object handle(object o) //Object olarak parametre almak oldukça önemlidir. bu sayede ileride oluşacak senaryolarda, zincire yeni halkalar
+            //eklendiğiğnde istediğimiz bir tipte bir halkadan bir diğer halkaya data geçebiliriz.
+        {//asıl işi yapacak olan metot
             //bu metot içerisinde işlenmiş olan verileri excel formatına çekmiş bulunuyoruz.
             var workBook = new XLWorkbook();
 
