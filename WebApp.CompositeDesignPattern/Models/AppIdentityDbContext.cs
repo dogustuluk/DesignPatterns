@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.CompositeDesignPattern.Models;
 
 namespace BaseProject.Models
 {
@@ -13,5 +14,7 @@ namespace BaseProject.Models
         {
 
         }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Book> Books { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.CompositeDesignPattern.Models;
 
 namespace BaseProject
 {
@@ -47,11 +48,24 @@ namespace BaseProject
                 //Wait bir method, await ise bir keyword'tür.
                 //buradaki kodlarda asenkron bir method kullanmaz ciddi bir etki göstermez projemizde fakat diðer sýnýflarda, sürekli çalýþacak olan sýnýflarda
                 //asenkron method'lar kullanmamýz ciddi performans artýþlarýna neden olacaktýr.
-                userManager.CreateAsync(new AppUser() { UserName = "user1", Email = "user1@gmail.com" }, "Password12*").Wait();
+                
+                var newUser = new AppUser(){UserName = "user1", Email = "user1@gmail.com" };
+                userManager.CreateAsync (newUser, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user2", Email = "user2@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user3", Email = "user3@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user4", Email = "user4@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user5", Email = "user5@gmail.com" }, "Password12*").Wait();
+
+                var newCategory1 = new Category {Name = "Fantastik", ReferenceId = 0, UserId = newUser.Id };
+                var newCategory2 = new Category { Name = "Gerilim", ReferenceId = 0, UserId = newUser.Id };
+                var newCategory3 = new Category { Name = "Klasikler", ReferenceId = 0, UserId = newUser.Id };
+
+                identityDbContext.Categories.AddRange(newCategory1, newCategory2, newCategory3);
+                identityDbContext.SaveChanges();
+
+                var subCategory1 = new Category { Name = "Rus Klasikleri", ReferenceId = newCategory3.Id, UserId = newUser.Id };
+
+                identityDbContext.SaveChanges();
             }
 
 
