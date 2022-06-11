@@ -64,7 +64,14 @@ namespace BaseProject
                 identityDbContext.SaveChanges();
 
                 var subCategory1 = new Category { Name = "Rus Klasikleri", ReferenceId = newCategory3.Id, UserId = newUser.Id };
+                var subCategory2 = new Category { Name = "Korku-Gerilim", ReferenceId = newCategory2.Id, UserId = newUser.Id };
+                var subCategory3 = new Category { Name = "Orta-Dünya", ReferenceId = newCategory1.Id, UserId = newUser.Id };
 
+                identityDbContext.Categories.AddRange(subCategory1, subCategory2, subCategory3);
+                identityDbContext.SaveChanges();
+
+                var subSubCategory1 = new Category { Name = "Dostoyevski Kitaplarý", ReferenceId = subCategory1.Id, UserId = newUser.Id };
+                identityDbContext.Categories.Add(subSubCategory1);
                 identityDbContext.SaveChanges();
             }
 
