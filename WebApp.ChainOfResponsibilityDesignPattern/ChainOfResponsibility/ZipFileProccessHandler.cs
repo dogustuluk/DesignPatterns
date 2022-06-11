@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -9,6 +10,7 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
 {
     public class ZipFileProccessHandler<T> : ProccessHandler
     {
+        
         public override object handle(object o)
         {
             var excelMemoryStream = o as MemoryStream; //bir önceki halkadan memory stream geldiğinden dolayı oluşturduk. gelen objeyi bir memoryStream'e çevirdik.
@@ -18,7 +20,8 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
 
             using (var zipStream = new MemoryStream())
             {
-                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create))
+                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, true)) //stream'i açık bırakmamız gerekmektedir(true yapıyoruz).
+                                //çünkü "return base.handle(zipStream)" kodu ile erişim sağlamamız gerekiyor.
                 {
                     var zipFile = archive.CreateEntry($"{typeof(T).Name}.xlsx"); //dosyayı dinamik olarak geçmek için class'ı generic yapıyoruz.
 

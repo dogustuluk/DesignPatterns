@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.ChainOfResponsibilityDesignPattern.Models;
 
 namespace BaseProject
 {
@@ -53,8 +54,13 @@ namespace BaseProject
                 userManager.CreateAsync(new AppUser() { UserName = "user4", Email = "user4@gmail.com" }, "Password12*").Wait();
                 userManager.CreateAsync(new AppUser() { UserName = "user5", Email = "user5@gmail.com" }, "Password12*").Wait();
             }
-
-
+            
+            //uygulama her ayaða kalktýðýnda 20 ürün ekler
+            Enumerable.Range(1, 20).ToList().ForEach(x => 
+            {
+                identityDbContext.Products.Add(new Product { Name = $"Kalem {x}", Price = 100, Stock = 20 });
+            });
+            identityDbContext.SaveChanges();
 
             host.Run();
         }

@@ -21,7 +21,9 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
         public override object handle(object o)
         {
             var zipMemoryStream = o as MemoryStream;
+            
             zipMemoryStream.Position = 0;
+            
             var mailMessage = new MailMessage();
 
             var smptClient = new SmtpClient("srvm11.trwww.com");
@@ -32,11 +34,15 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
 
             mailMessage.Subject = "Zip dosyası";
 
-            Attachment attachment = new Attachment(zipMemoryStream, _fileName, MediaTypeNames.Application.Zip); 
+            mailMessage.Body = "<p>Zip dosyası ektedir</p>";
 
-            mailMessage.Body = "<p>Zip dosyası ektedirç</p>";
+            Attachment attachment = new Attachment(zipMemoryStream, _fileName, MediaTypeNames.Application.Zip);
 
+            mailMessage.Attachments.Add(attachment);
+            
             mailMessage.IsBodyHtml = true;
+
+           // smptClient.UseDefaultCredentials = true;
 
             smptClient.Port = 587;
 
@@ -45,7 +51,7 @@ namespace WebApp.ChainOfResponsibilityDesignPattern.ChainOfResponsibility
 
             smptClient.Send(mailMessage);
 
-            return base.handle(o); //zincirin bir sonraki halkası olmadığından dolayı, "o" yerine "null" şeklinde set edebiliriz.
+            return base.handle(null); //zincirin bir sonraki halkası olmadığından dolayı, "o" yerine "null" şeklinde set edebiliriz.
         }
     }
 }
