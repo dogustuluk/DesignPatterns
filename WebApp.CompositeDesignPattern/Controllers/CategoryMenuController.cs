@@ -37,6 +37,13 @@ namespace WebApp.CompositeDesignPattern.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(int categoryId, string bookName)
+        {
+            await _context.Books.AddAsync(new Book { CategoryId = categoryId, Name = bookName });
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
         //alttaki metotta root yani kök menü gelmektedir. Gelen kök menünün içerisinde diğer elemanlar da var.
         public BookComposite GetMenus(List<Category> categories, Category topCategory, BookComposite topBookComposite, BookComposite last = null)
