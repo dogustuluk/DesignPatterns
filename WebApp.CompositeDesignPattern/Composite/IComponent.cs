@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.CompositeDesignPattern.Composite
 {
-    interface IComponent
+    public interface IComponent
     {
         public int Id { get; set; }
         public string Name { get; set; }
