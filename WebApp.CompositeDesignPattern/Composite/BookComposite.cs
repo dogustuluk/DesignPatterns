@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,26 @@ namespace WebApp.CompositeDesignPattern.Composite
             sb.Append("</ul>");
 
             return sb.ToString();
+        }
+
+        public List<SelectListItem> GetSelectListItem(string line)
+        {
+            var list = new List<SelectListItem> { new($"{line}{Name}", Id.ToString()) };
+
+            if (_components.Any (x => x is BookComposite)) 
+            {
+                line += " - ";
+            } //bu noktada menüdeki kırılımlar eklenmiş oldu. alt satırlarda ise eklenmiş olan kırılımların içerisinde tekrar kırılım oluşturup alt menüyü yazdırır.
+
+            _components.ForEach(x => 
+            {
+                if (x is BookComposite bookComposite)
+                {
+                    list.AddRange(bookComposite.GetSelectListItem(line));
+                }
+            });
+            return list;
+            
         }
     }
 }

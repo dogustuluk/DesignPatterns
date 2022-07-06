@@ -31,6 +31,9 @@ namespace WebApp.CompositeDesignPattern.Controllers
             var menu = GetMenus(categories, new Category { Name = "TopCategory", Id = 0 }, new BookComposite(0, "TopMenu")); //id'leri 0 olanlar bizim köklerimizi oluşturmaktadır.
 
             ViewBag.menu = menu;
+
+            ViewBag.selectList = menu.Components.SelectMany(x => ((BookComposite)x).GetSelectListItem(""));
+
             return View();
         }
 
