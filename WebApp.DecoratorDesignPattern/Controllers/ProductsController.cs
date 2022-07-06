@@ -8,23 +8,31 @@ using Microsoft.EntityFrameworkCore;
 using BaseProject.Models;
 using WebApp.DecoratorDesignPattern.Models;
 using Microsoft.AspNetCore.Authorization;
+using WebApp.DecoratorDesignPattern.Repositories;
+using System.Security.Claims;
 
 namespace WebApp.DecoratorDesignPattern.Controllers
 {
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly AppIdentityDbContext _context;
+        private readonly IProductRepository _productRepository; //eğer ilk halinde olduğu gibi, AppIdentityDbContext olsaydı Controller data'nın nereden geldiğini biliyor olacaktı.
+                                                                //Ayrıca ORM aracı olarak entityframework kullanıldığını da biliyor olacak.
+                                                                //Ama buradaki gibi interface implemente edersek kullanılacak olan ORM aracını da bilmiyor olacak; sadece interface'i biliyor olacak.
+                                                                //Bu sayede unit test yazmak da daha kolay olacak.
 
-        public ProductsController(AppIdentityDbContext context)
+
+        public ProductsController(IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Products.ToListAsync());
+            var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+            return View(await _productRepository.GetAll(userId));
         }
 
         // GET: Products/Details/5
@@ -35,8 +43,7 @@ namespace WebApp.DecoratorDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productRepository.GetById(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -56,12 +63,13 @@ namespace WebApp.DecoratorDesignPattern.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,UserId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                product.UserId = userId;
+                await _productRepository.Save(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -75,7 +83,7 @@ namespace WebApp.DecoratorDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productRepository.GetById(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -99,8 +107,7 @@ namespace WebApp.DecoratorDesignPattern.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    await _productRepository.Update(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,8 +133,7 @@ namespace WebApp.DecoratorDesignPattern.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productRepository.GetById(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -141,15 +147,14 @@ namespace WebApp.DecoratorDesignPattern.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            var product = await _productRepository.GetById(id);
+            await _productRepository.Remove(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return _productRepository.GetById(id) != null;
         }
     }
 }
