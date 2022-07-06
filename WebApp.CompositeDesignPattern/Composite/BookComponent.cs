@@ -10,7 +10,7 @@ namespace WebApp.CompositeDesignPattern.Composite
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public BookComponent(string name, int id)
+        public BookComponent(int id, string name )
         {
             Id = id;
             Name = name;
