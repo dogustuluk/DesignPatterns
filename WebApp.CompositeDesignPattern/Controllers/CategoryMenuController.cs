@@ -30,9 +30,12 @@ namespace WebApp.CompositeDesignPattern.Controllers
 
             var menu = GetMenus(categories, new Category { Name = "TopCategory", Id = 0 }, new BookComposite(0, "TopMenu")); //id'leri 0 olanlar bizim köklerimizi oluşturmaktadır.
 
+            ViewBag.menu = menu;
             return View();
         }
 
+
+        //alttaki metotta root yani kök menü gelmektedir. Gelen kök menünün içerisinde diğer elemanlar da var.
         public BookComposite GetMenus(List<Category> categories, Category topCategory, BookComposite topBookComposite, BookComposite last = null)
         {
             categories.Where(x => x.ReferenceId == topCategory.Id).ToList().ForEach(categoryItem =>
@@ -41,7 +44,7 @@ namespace WebApp.CompositeDesignPattern.Controllers
 
                 categoryItem.Books.ToList().ForEach(bookItem =>
                 {
-                    bookComposite.Add(new BookComponent(bookItem.Id, bookItem.Name));
+                    bookComposite.Add(new BookComponent(bookItem.Id, bookItem.Name)); //BookComponent sınıfımız IComponent sınıfını implemente ettiği için direkt olarak "new BookComponent" diyebiliyoruz.
                 });
                 if (last != null)
                 {
