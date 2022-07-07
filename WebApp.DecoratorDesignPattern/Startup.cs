@@ -1,6 +1,7 @@
 using BaseProject.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +32,14 @@ namespace BaseProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            //scrutor uzantýsý ile yapýlan kýsa yol çözüm.
-            services.AddScoped<IProductRepository, ProductRepository>().Decorate<IProductRepository, ProductRepositoryCacheDecorator>().Decorate<IProductRepository, ProductRepositoryLoggingDecorator>();
+            services.AddHttpContextAccessor();
+
+            //2.yol
+            ////scrutor uzantýsý ile yapýlan kýsa yol çözüm.
+            //services.AddScoped<IProductRepository, ProductRepository>().Decorate<IProductRepository, ProductRepositoryCacheDecorator>().Decorate<IProductRepository, ProductRepositoryLoggingDecorator>();
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
             //altta 1.yol vardýr. Üst tarafta ise scrutor adlý uzantý ile tüm bu kod satýrlarýný oldukça kýsa bir hale getiriyor olucaz.
             //services.AddScoped<IProductRepository>(sp =>
             //{
@@ -51,6 +57,27 @@ namespace BaseProject
             //                                                                                          //gerekmektedir.
             //    return logDecorator;
             //});
+
+            //3.yol >>>>>>>>>>>>>>> runtime esnasýnda deðiþiklik yapma
+            services.AddScoped<IProductRepository>(sp =>
+            { //öncelikle giriþ yapmýþ olan kullanýcýyý bulmamýz gerekmektedir. Bunu ise Http Accessor üzerinden elde edebiliriz. Servis olarak üste ekleyelim. Daha sonra bunu burada elde edelim.
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+
+                var context = sp.GetRequiredService<AppIdentityDbContext>();
+                var memoryCache = sp.GetRequiredService<IMemoryCache>();
+                var productRepository = new ProductRepository(context);
+                var logService = sp.GetRequiredService<ILogger<ProductRepositoryLoggingDecorator>>();
+
+                if (httpContextAccessor.HttpContext.User.Identity.Name == "user1")
+                {
+                    var cacheDecorator = new ProductRepositoryCacheDecorator(productRepository, memoryCache);
+                    return cacheDecorator;
+                }
+
+                var logDecorator = new ProductRepositoryLoggingDecorator(productRepository, logService);
+                return logDecorator;
+            });
+
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
