@@ -31,22 +31,26 @@ namespace BaseProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddScoped<IProductRepository>(sp =>
-            {
-                var context = sp.GetRequiredService<AppIdentityDbContext>();
-                var memoryCache = sp.GetRequiredService<IMemoryCache>();
-                var productRepository = new ProductRepository(context);
-                var logService = sp.GetRequiredService<ILogger<ProductRepositoryLoggingDecorator>>();
-                var cacheDecorator = new ProductRepositoryCacheDecorator(productRepository, memoryCache);
-                var logDecorator = new ProductRepositoryLoggingDecorator(cacheDecorator, logService); //cacheDecorator almamýzýn sebebi ise IProductRepository'i implemente eden ProductRepository
-                                                                                                      //istiyor. Burada isterleri karþýlayan sýnýftan birisi de ProductRepositoryCacheDecorator sýnýfý
-                                                                                                      //olmaktadýr. Eðer cacheDecorator'ý alýrsak doðru bir cevap vermiþ oluruz.
-                                                                                                      //ProductRepositoryCacheDecorator sýnýfý BaseProductRepositoryDecorator'ý miras almaktadýr.
-                                                                                                      //bu sýnýf ise IProductRepository'i miras alýyor.
-                                                                                                      //>>eðer 3.bir decorator olursa bu sefer cacheDecorator yazýlan yere logDecorator'ý geçmemiz
-                                                                                                      //gerekmektedir.
-                return logDecorator;
-            });
+            //scrutor uzantýsý ile yapýlan kýsa yol çözüm.
+            services.AddScoped<IProductRepository, ProductRepository>().Decorate<IProductRepository, ProductRepositoryCacheDecorator>().Decorate<IProductRepository, ProductRepositoryLoggingDecorator>();
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            //altta 1.yol vardýr. Üst tarafta ise scrutor adlý uzantý ile tüm bu kod satýrlarýný oldukça kýsa bir hale getiriyor olucaz.
+            //services.AddScoped<IProductRepository>(sp =>
+            //{
+            //    var context = sp.GetRequiredService<AppIdentityDbContext>();
+            //    var memoryCache = sp.GetRequiredService<IMemoryCache>();
+            //    var productRepository = new ProductRepository(context);
+            //    var logService = sp.GetRequiredService<ILogger<ProductRepositoryLoggingDecorator>>();
+            //    var cacheDecorator = new ProductRepositoryCacheDecorator(productRepository, memoryCache);
+            //    var logDecorator = new ProductRepositoryLoggingDecorator(cacheDecorator, logService); //cacheDecorator almamýzýn sebebi ise IProductRepository'i implemente eden ProductRepository
+            //                                                                                          //istiyor. Burada isterleri karþýlayan sýnýftan birisi de ProductRepositoryCacheDecorator sýnýfý
+            //                                                                                          //olmaktadýr. Eðer cacheDecorator'ý alýrsak doðru bir cevap vermiþ oluruz.
+            //                                                                                          //ProductRepositoryCacheDecorator sýnýfý BaseProductRepositoryDecorator'ý miras almaktadýr.
+            //                                                                                          //bu sýnýf ise IProductRepository'i miras alýyor.
+            //                                                                                          //>>eðer 3.bir decorator olursa bu sefer cacheDecorator yazýlan yere logDecorator'ý geçmemiz
+            //                                                                                          //gerekmektedir.
+            //    return logDecorator;
+            //});
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
