@@ -8,6 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,10 +36,16 @@ namespace BaseProject
                 var context = sp.GetRequiredService<AppIdentityDbContext>();
                 var memoryCache = sp.GetRequiredService<IMemoryCache>();
                 var productRepository = new ProductRepository(context);
-
+                var logService = sp.GetRequiredService<ILogger<ProductRepositoryLoggingDecorator>>();
                 var cacheDecorator = new ProductRepositoryCacheDecorator(productRepository, memoryCache);
-
-                return cacheDecorator;
+                var logDecorator = new ProductRepositoryLoggingDecorator(cacheDecorator, logService); //cacheDecorator almamýzýn sebebi ise IProductRepository'i implemente eden ProductRepository
+                                                                                                      //istiyor. Burada isterleri karþýlayan sýnýftan birisi de ProductRepositoryCacheDecorator sýnýfý
+                                                                                                      //olmaktadýr. Eðer cacheDecorator'ý alýrsak doðru bir cevap vermiþ oluruz.
+                                                                                                      //ProductRepositoryCacheDecorator sýnýfý BaseProductRepositoryDecorator'ý miras almaktadýr.
+                                                                                                      //bu sýnýf ise IProductRepository'i miras alýyor.
+                                                                                                      //>>eðer 3.bir decorator olursa bu sefer cacheDecorator yazýlan yere logDecorator'ý geçmemiz
+                                                                                                      //gerekmektedir.
+                return logDecorator;
             });
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
