@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.AdapterDesignPattern.Services
 {
-    interface IAdvanceImageProcess
+    public interface IAdvanceImageProcess
     {
         void AddWatermarkImage(Stream stream, string text, string filePath, Color color, Color outlineColor);
     }

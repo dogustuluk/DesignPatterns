@@ -27,7 +27,8 @@ namespace BaseProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IImageProcess, ImageProcess>();
+            services.AddScoped<IAdvanceImageProcess, AdvanceImageProcess>();
+            services.AddScoped<IImageProcess, AdvanceImageProcessAdapter>(); //bu kýsým önemli. >>burada IImageProcess ile karþýlaþtýðýnda ilgili adapter'den bir nesne örneði almasý gerekmektedir.
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServer"));
